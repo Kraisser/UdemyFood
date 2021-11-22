@@ -97,8 +97,7 @@ window.addEventListener('DOMContentLoaded', function() {
 		// Modal
 
 		const modalTrigger = document.querySelectorAll('[data-modal]'),
-				modal = document.querySelector('.modal'),
-				modalCloseBtn = document.querySelector('[data-close]');
+				modal = document.querySelector('.modal');
 
 		modalTrigger.forEach(btn => {
 				btn.addEventListener('click', openModal);
@@ -114,13 +113,11 @@ window.addEventListener('DOMContentLoaded', function() {
 				modal.classList.add('show');
 				modal.classList.remove('hide');
 				document.body.style.overflow = 'hidden';
-				clearInterval(modalTimerId);
+				// clearInterval(modalTimerId);
 		}
-		
-		modalCloseBtn.addEventListener('click', closeModal);
 
 		modal.addEventListener('click', (e) => {
-				if (e.target === modal) {
+				if (e.target === modal || e.target.getAttribute(`data-close`) == '') {
 						closeModal();
 				}
 		});
@@ -197,36 +194,53 @@ window.addEventListener('DOMContentLoaded', function() {
 			statusMessage.textContent = messages.loading;
 			form.append(statusMessage);
 
-			const request = new XMLHttpRequest();
-			request.open(`POST`, `server.php`);
-			request.setRequestHeader(`Content-type`, `application/json`);
-
-
 			const formData = new FormData(form);
-
-			let formDataObj = {};
+			const formDataObj = {};
 			formData.forEach((val, key) => formDataObj[key] = val);
 
-			const formDataJSON = JSON.stringify(formDataObj);
-
-			request.send(formDataJSON);
-
-			request.addEventListener(`load`, () => {
-				if (request.status === 200) {
-					console.log(request.response);
-					statusMessage.textContent = messages.success;
-
-					form.reset();
-
-					setTimeout(() => {
-						statusMessage.remove();
-					}, 2000);
-				} else {
-					statusMessage.textContent = messages.fail;
-				}
+			fetch('server1.php', {
+				method: 'POST',
+				headers: {
+					'Content-type': `application/json`
+				},
+				body: JSON.stringify(formDataObj)
 			})
-
+				.then(data => data.text())
+				.then((data) => {
+				console.log(data);
+				showThanksModal(messages.success);
+							
+				statusMessage.remove();
+			}).catch((e) => {
+				showThanksModal(messages.fail);
+				console.log(new Error(e));
+			}).finally(() => form.reset());
 		})
+	}
+
+	function showThanksModal(message) {
+		const prevModalDialog = document.querySelector(`.modal__dialog`);
+
+		prevModalDialog.classList.add(`hide`);
+		openModal();
+
+		const thanksModal = document.createElement(`div`);
+		thanksModal.classList.add(`modal__dialog`);
+		thanksModal.innerHTML = `
+			<div class='modal__content'>
+				<div class='modal__close'>×</div>
+				<div class='modal__title'>${message}</div>
+			</div>
+		`;
+
+		document.querySelector(`.modal`).append(thanksModal);
+
+		setTimeout(() => {
+			closeModal();
+			thanksModal.remove();
+			prevModalDialog.classList.remove(`hide`);
+		}, 4000);
+
 	}
 	
 	new MenuCard(
