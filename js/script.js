@@ -183,9 +183,34 @@ window.addEventListener('DOMContentLoaded', function() {
 		fail: `Неудача`
 	};
 
-	forms.forEach((item) => postData(item));
+	forms.forEach((item) => bindPostData(item));
 
-	function postData(form) {
+	const postData = async (url, data) => {
+		const res = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-type': 'application/json'
+			},
+			body: data
+		});
+
+		return await res.json();
+	}
+
+	const getData = async (url) => {
+		const res = await fetch(url);
+
+		if (!res.ok) {
+			throw new Error(`Fetch Fail ${url}, error(${res.status})`);
+		}
+
+		return await res.json();
+	}
+
+	const formDataToJSON = formData => Object.fromEntries(formData.entries());
+	
+
+	function bindPostData(form) {
 		form.addEventListener(`submit`, (e) => {
 			e.preventDefault();
 
@@ -195,17 +220,9 @@ window.addEventListener('DOMContentLoaded', function() {
 			form.append(statusMessage);
 
 			const formData = new FormData(form);
-			const formDataObj = {};
-			formData.forEach((val, key) => formDataObj[key] = val);
-
-			fetch('server1.php', {
-				method: 'POST',
-				headers: {
-					'Content-type': `application/json`
-				},
-				body: JSON.stringify(formDataObj)
-			})
-				.then(data => data.text())
+			const formDataObj = formDataToJSON(formData);
+			
+			postData(`http://localhost:3000/requests`, JSON.stringify(formDataObj))
 				.then((data) => {
 				console.log(data);
 				showThanksModal(messages.success);
@@ -242,32 +259,17 @@ window.addEventListener('DOMContentLoaded', function() {
 		}, 4000);
 
 	}
-	
-	new MenuCard(
-		`.menu__field .container`,
-		`img/tabs/vegy.jpg`,
-		`vegy`,
-		`Меню “Фитнес”`,
-		`Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. 
-		Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!`,
-		30).renderElement();
-	
-	new MenuCard(
-		`.menu__field .container`,
-		`img/tabs/elite.jpg`,
-		`elite`,
-		`Меню “Премиум”`,
-		`В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. 
-		Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!`,
-		45).renderElement();
-	
-	new MenuCard(
-		`.menu__field .container`,
-		`img/tabs/post.jpg`,
-		`post`,
-		`Меню “Постное”`,
-		`Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, 
-		молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.`,
-		25).renderElement();
+
+	getData(`http://localhost:3000/menu`)
+		.then(data => {
+			data.forEach(({ img, altimg, title, descr, price }) => {
+				new MenuCard(`.menu .container`, img, altimg, title, descr, price).renderElement()
+			})
+		});
+
+
+	// fetch(`http://localhost:3000/menu`)
+	// 	.then(data => data.json())
+	// 	.then(res => console.log(res));
 	
 });

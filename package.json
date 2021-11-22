@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Kraisser/UdemyFood#readme",
   "devDependencies": {
-    "json-server": "^0.17.0"
+    "json-server": "^0.17.0",
+    "npx": "^3.0.0"
   }
 }
