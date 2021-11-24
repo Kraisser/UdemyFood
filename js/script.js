@@ -183,7 +183,7 @@ window.addEventListener('DOMContentLoaded', function() {
 		fail: `Неудача`
 	};
 
-	forms.forEach((item) => bindPostData(item));
+	// forms.forEach((item) => bindPostData(item));
 
 	const postData = async (url, data) => {
 		const res = await fetch(url, {
@@ -260,16 +260,150 @@ window.addEventListener('DOMContentLoaded', function() {
 
 	}
 
-	getData(`http://localhost:3000/menu`)
-		.then(data => {
-			data.forEach(({ img, altimg, title, descr, price }) => {
-				new MenuCard(`.menu .container`, img, altimg, title, descr, price).renderElement()
-			})
-		});
+	// getData(`http://localhost:3000/menu`)
+	// 	.then(data => {
+	// 		data.forEach(({ img, altimg, title, descr, price }) => {
+	// 			new MenuCard(`.menu .container`, img, altimg, title, descr, price).renderElement()
+	// 		})
+	// 	});
 
+	// Slider
 
-	// fetch(`http://localhost:3000/menu`)
-	// 	.then(data => data.json())
-	// 	.then(res => console.log(res));
+	// class Slider {
+	// 	constructor(mainSliderContainer, slides, prevBut, nextBut, currSlideDisplay, maxSlidesDisplay) {
+	// 		this.mainSliderContainer = document.querySelector(mainSliderContainer);
+	// 		this.slides = this.mainSliderContainer.querySelectorAll(slides);
+	// 		this.maxSlides = this.slides.length;
+
+	// 		this.prevBut = this.mainSliderContainer.querySelector(prevBut);
+	// 		this.nextBut = this.mainSliderContainer.querySelector(nextBut);
+
+	// 		this.currSlideDisplay = document.querySelector(currSlideDisplay);
+	// 		this.maxSlidesDisplay = document.querySelector(maxSlidesDisplay);
+
+	// 		this.currSlide = 0;
+			
+	// 		this.startSlider();
+	// 	}
+		
+	// 	startSlider() {
+	// 		this.slides.forEach(item => item.classList.add(`hide`));
+	// 		this.openSlide();
+
+	// 		this.nextBut.addEventListener(`click`, () => this.nextSlide());
+	// 		this.prevBut.addEventListener(`click`, () => this.prevSlide());
+
+	// 		this.maxSlidesDisplay.innerHTML = this.maxSlides < 10 ? `0${this.maxSlides}` : this.maxSlides;
+	// 	}
+
+	// 	nextSlide() {
+	// 		this.hideSlide();
+
+	// 		this.currSlide += 1;
+	// 		if (this.currSlide === this.maxSlides) {
+	// 			this.currSlide = 0;
+	// 		}
+
+	// 		this.openSlide();
+	// 	}
+
+	// 	prevSlide() {
+	// 		this.hideSlide();
+
+	// 		this.currSlide -= 1;
+	// 		if (this.currSlide < 0) {
+	// 			this.currSlide = this.maxSlides - 1;
+	// 		}
+
+	// 		this.openSlide();
+	// 	}
+		
+	// 	hideSlide() {
+	// 		this.slides[this.currSlide].classList.add(`hide`);
+	// 	}
+
+	// 	openSlide() {
+	// 		this.slides[this.currSlide].classList.remove(`hide`);
+	// 		this.currSlideDisplay.innerHTML = this.currSlide + 1 < 10 ? `0${this.currSlide + 1}` : this.currSlide + 1;
+	// 	}
+	// }
 	
+	// const foodSlider = new Slider(`.offer__slider`, `.offer__slide`, `.offer__slider-prev`, `.offer__slider-next`, `#current`, `#total`);
+
+	class Slider2 {
+		constructor(mainSliderContainer, carouselWrapper, slides, prevBut, nextBut, currSlideDisplay, maxSlidesDisplay) {
+			this.mainSliderContainer = document.querySelector(mainSliderContainer);
+			this.carouselWrapper = document.querySelector(carouselWrapper);
+			this.slides = this.carouselWrapper.querySelectorAll(slides);
+			this.maxSlides = this.slides.length;
+
+			this.prevBut = this.mainSliderContainer.querySelector(prevBut);
+			this.nextBut = this.mainSliderContainer.querySelector(nextBut);
+
+			this.currSlideDisplay = document.querySelector(currSlideDisplay);
+			this.maxSlidesDisplay = document.querySelector(maxSlidesDisplay);
+
+			this.currSlide = 0;
+			this.mainWidth = window.getComputedStyle(this.mainSliderContainer).width.match(/\d+/)[0];
+
+			this.mainSliderContainer.style.position = `relative`;
+			this.mainSliderContainer.insertAdjacentHTML(`beforeend`, `<div class="carousel-indicators"></div>`);
+			this.carouselIndicatorWrapper = this.mainSliderContainer.querySelector(`.carousel-indicators`);
+			
+			for (let i = 0; i < this.maxSlides; i++) {
+				this.carouselIndicatorWrapper.insertAdjacentHTML(`beforeend`, `<div class="dot" data-slide="${i}"></div>`);
+			}
+
+			this.startSlider();
+		}
+		
+		startSlider() {
+			this.maxSlidesDisplay.innerHTML = this.maxSlides < 10 ? `0${this.maxSlides}` : this.maxSlides;
+
+			this.mainSliderContainer.style.overflow = `hidden`;
+			this.slides.forEach(slide => slide.style.width = `${this.mainWidth}`);
+
+			this.carouselWrapper.style.display = `flex`;
+			this.carouselWrapper.style.transition = `1s all`;
+			this.carouselWrapper.style.width = `${this.mainWidth * this.maxSlides}px`;
+
+			this.nextBut.addEventListener(`click`, () => this.nextSlide());
+			this.prevBut.addEventListener(`click`, () => this.prevSlide());
+
+			this.carouselIndicatorWrapper.addEventListener(`click`, (e) => this.dotSelect(e));
+		}
+
+		nextSlide() {
+			this.currSlide += 1;
+			this.currSlide >= this.maxSlides ? this.currSlide = 0 : this.currSlide;			
+			
+			this.openSlide();
+		}
+
+		prevSlide() {
+			this.currSlide -= 1;
+			this.currSlide < 0 ? this.currSlide = this.maxSlides - 1 : this.currSlide;			
+			
+			this.openSlide();
+		}
+
+		dotSelect(e) {
+			if (e.target.dataset.slide) {
+				this.currSlide = +e.target.dataset.slide;
+
+				this.openSlide();
+			}
+		}
+
+		openSlide() {
+			this.currSlideDisplay.innerHTML = this.currSlide + 1 < 10 ? `0${this.currSlide + 1}` : this.currSlide + 1;
+
+			this.carouselWrapper.style.transform = `translateX(-${this.mainWidth * this.currSlide}px)`;
+		}
+
+
+	}
+
+	const foodSlider2 = new Slider2(`.offer__slider`, `.offer__slider-inner`, `.offer__slide`, `.offer__slider-prev`, `.offer__slider-next`, `#current`, `#total`);
+
 });
