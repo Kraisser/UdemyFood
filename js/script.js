@@ -6,90 +6,89 @@ window.addEventListener('DOMContentLoaded', function() {
 		tabsContent = document.querySelectorAll('.tabcontent'),
 		tabsParent = document.querySelector('.tabheader__items');
 
-	function hideTabContent() {
-				
-				tabsContent.forEach(item => {
-						item.classList.add('hide');
-						item.classList.remove('show', 'fade');
-				});
+	function hideTabContent() {				
+		tabsContent.forEach(item => {
+			item.classList.add('hide');
+			item.classList.remove('show', 'fade');
+		});
 
-				tabs.forEach(item => {
-						item.classList.remove('tabheader__item_active');
-				});
+		tabs.forEach(item => {
+			item.classList.remove('tabheader__item_active');
+		});
 	}
 
 	function showTabContent(i = 0) {
-				tabsContent[i].classList.add('show', 'fade');
-				tabsContent[i].classList.remove('hide');
-				tabs[i].classList.add('tabheader__item_active');
-		}
+		tabsContent[i].classList.add('show', 'fade');
+		tabsContent[i].classList.remove('hide');
+		tabs[i].classList.add('tabheader__item_active');
+	}
 		
-		hideTabContent();
-		showTabContent();
+	hideTabContent();
+	showTabContent();
 
 	tabsParent.addEventListener('click', function(event) {
 		const target = event.target;
 		if(target && target.classList.contains('tabheader__item')) {
-						tabs.forEach((item, i) => {
-								if (target == item) {
-										hideTabContent();
-										showTabContent(i);
-								}
-						});
+			tabs.forEach((item, i) => {
+				if (target == item) {
+					hideTabContent();
+					showTabContent(i);
+				}
+			});
 		}
 		});
 		
 		// Timer
 
-		const deadline = '2021-11-17';
+		const deadline = '2022-11-17';
 
 		function getTimeRemaining(endtime) {
-				const t = Date.parse(endtime) - Date.parse(new Date()),
-						days = Math.floor( (t/(1000*60*60*24)) ),
-						seconds = Math.floor( (t/1000) % 60 ),
-						minutes = Math.floor( (t/1000/60) % 60 ),
-						hours = Math.floor( (t/(1000*60*60) % 24) );
+			const t = Date.parse(endtime) - Date.parse(new Date()),
+				days = Math.floor( (t/(1000*60*60*24)) ),
+				seconds = Math.floor( (t/1000) % 60 ),
+				minutes = Math.floor( (t/1000/60) % 60 ),
+				hours = Math.floor( (t/(1000*60*60) % 24) );
 
-				return {
-						'total': t,
-						'days': days,
-						'hours': hours,
-						'minutes': minutes,
-						'seconds': seconds
-				};
+			return {
+				'total': t,
+				'days': days,
+				'hours': hours,
+				'minutes': minutes,
+				'seconds': seconds
+			};
 		}
 
 		function getZero(num){
-				if (num >= 0 && num < 10) { 
-						return '0' + num;
-				} else {
-						return num;
-				}
+			if (num >= 0 && num < 10) { 
+				return '0' + num;
+			} else {
+				return num;
+			}
 		}
 
 		function setClock(selector, endtime) {
 
-				const timer = document.querySelector(selector),
-						days = timer.querySelector("#days"),
-						hours = timer.querySelector('#hours'),
-						minutes = timer.querySelector('#minutes'),
-						seconds = timer.querySelector('#seconds'),
-						timeInterval = setInterval(updateClock, 1000);
+			const timer = document.querySelector(selector),
+				days = timer.querySelector("#days"),
+				hours = timer.querySelector('#hours'),
+				minutes = timer.querySelector('#minutes'),
+				seconds = timer.querySelector('#seconds'),
+				timeInterval = setInterval(updateClock, 1000);
 
-				updateClock();
+			updateClock();
 
-				function updateClock() {
-						const t = getTimeRemaining(endtime);
+			function updateClock() {
+				const t = getTimeRemaining(endtime);
 
-						days.innerHTML = getZero(t.days);
-						hours.innerHTML = getZero(t.hours);
-						minutes.innerHTML = getZero(t.minutes);
-						seconds.innerHTML = getZero(t.seconds);
+				days.innerHTML = getZero(t.days);
+				hours.innerHTML = getZero(t.hours);
+				minutes.innerHTML = getZero(t.minutes);
+				seconds.innerHTML = getZero(t.seconds);
 
-						if (t.total <= 0) {
-								clearInterval(timeInterval);
-						}
+				if (t.total <= 0) {
+					clearInterval(timeInterval);
 				}
+			}
 		}
 
 		setClock('.timer', deadline);
@@ -97,35 +96,35 @@ window.addEventListener('DOMContentLoaded', function() {
 		// Modal
 
 		const modalTrigger = document.querySelectorAll('[data-modal]'),
-				modal = document.querySelector('.modal');
+			modal = document.querySelector('.modal');
 
 		modalTrigger.forEach(btn => {
-				btn.addEventListener('click', openModal);
+			btn.addEventListener('click', openModal);
 		});
 
 		function closeModal() {
-				modal.classList.add('hide');
-				modal.classList.remove('show');
-				document.body.style.overflow = '';
+			modal.classList.add('hide');
+			modal.classList.remove('show');
+			document.body.style.overflow = '';
 		}
 
 		function openModal() {
-				modal.classList.add('show');
-				modal.classList.remove('hide');
-				document.body.style.overflow = 'hidden';
-				// clearInterval(modalTimerId);
+			modal.classList.add('show');
+			modal.classList.remove('hide');
+			document.body.style.overflow = 'hidden';
+			// clearInterval(modalTimerId);
 		}
 
 		modal.addEventListener('click', (e) => {
-				if (e.target === modal || e.target.getAttribute(`data-close`) == '') {
-						closeModal();
-				}
+			if (e.target === modal || e.target.getAttribute(`data-close`) == '') {
+				closeModal();
+			}
 		});
 
 		document.addEventListener('keydown', (e) => {
-				if (e.code === "Escape" && modal.classList.contains('show')) { 
-						closeModal();
-				}
+			if (e.code === "Escape" && modal.classList.contains('show')) { 
+				closeModal();
+			}
 		});
 
 		// const modalTimerId = setTimeout(openModal, 3000);
@@ -269,68 +268,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 	// Slider
 
-	// class Slider {
-	// 	constructor(mainSliderContainer, slides, prevBut, nextBut, currSlideDisplay, maxSlidesDisplay) {
-	// 		this.mainSliderContainer = document.querySelector(mainSliderContainer);
-	// 		this.slides = this.mainSliderContainer.querySelectorAll(slides);
-	// 		this.maxSlides = this.slides.length;
-
-	// 		this.prevBut = this.mainSliderContainer.querySelector(prevBut);
-	// 		this.nextBut = this.mainSliderContainer.querySelector(nextBut);
-
-	// 		this.currSlideDisplay = document.querySelector(currSlideDisplay);
-	// 		this.maxSlidesDisplay = document.querySelector(maxSlidesDisplay);
-
-	// 		this.currSlide = 0;
-			
-	// 		this.startSlider();
-	// 	}
-		
-	// 	startSlider() {
-	// 		this.slides.forEach(item => item.classList.add(`hide`));
-	// 		this.openSlide();
-
-	// 		this.nextBut.addEventListener(`click`, () => this.nextSlide());
-	// 		this.prevBut.addEventListener(`click`, () => this.prevSlide());
-
-	// 		this.maxSlidesDisplay.innerHTML = this.maxSlides < 10 ? `0${this.maxSlides}` : this.maxSlides;
-	// 	}
-
-	// 	nextSlide() {
-	// 		this.hideSlide();
-
-	// 		this.currSlide += 1;
-	// 		if (this.currSlide === this.maxSlides) {
-	// 			this.currSlide = 0;
-	// 		}
-
-	// 		this.openSlide();
-	// 	}
-
-	// 	prevSlide() {
-	// 		this.hideSlide();
-
-	// 		this.currSlide -= 1;
-	// 		if (this.currSlide < 0) {
-	// 			this.currSlide = this.maxSlides - 1;
-	// 		}
-
-	// 		this.openSlide();
-	// 	}
-		
-	// 	hideSlide() {
-	// 		this.slides[this.currSlide].classList.add(`hide`);
-	// 	}
-
-	// 	openSlide() {
-	// 		this.slides[this.currSlide].classList.remove(`hide`);
-	// 		this.currSlideDisplay.innerHTML = this.currSlide + 1 < 10 ? `0${this.currSlide + 1}` : this.currSlide + 1;
-	// 	}
-	// }
-	
-	// const foodSlider = new Slider(`.offer__slider`, `.offer__slide`, `.offer__slider-prev`, `.offer__slider-next`, `#current`, `#total`);
-
-	class Slider2 {
+	class Slider {
 		constructor(mainSliderContainer, carouselWrapper, slides, prevBut, nextBut, currSlideDisplay, maxSlidesDisplay) {
 			this.mainSliderContainer = document.querySelector(mainSliderContainer);
 			this.carouselWrapper = document.querySelector(carouselWrapper);
@@ -400,10 +338,67 @@ window.addEventListener('DOMContentLoaded', function() {
 
 			this.carouselWrapper.style.transform = `translateX(-${this.mainWidth * this.currSlide}px)`;
 		}
-
-
 	}
 
-	const foodSlider2 = new Slider2(`.offer__slider`, `.offer__slider-inner`, `.offer__slide`, `.offer__slider-prev`, `.offer__slider-next`, `#current`, `#total`);
+	const foodSlider = new Slider(`.offer__slider`, `.offer__slider-inner`, `.offer__slide`, `.offer__slider-prev`, `.offer__slider-next`, `#current`, `#total`);
+
+	function caloriesCalc() {
+		const mainWrapper = document.querySelector(`.calculating__field`),
+			sexChooseWrapper = mainWrapper.querySelector(`#gender`),
+			resultWrapper = mainWrapper.querySelector(`.calculating__result`),
+			activityWrapper = mainWrapper.querySelector(`#activityChoose`);
+
+		let info = {};
+
+		getInputValue(`#height`);
+		getInputValue(`#weight`);
+		getInputValue(`#age`);
+		
+		sexChooseWrapper.addEventListener(`click`, e => {
+			if (e.target.classList.contains(`calculating__choose-item`)) {
+				sexChooseWrapper.querySelectorAll(`.calculating__choose-item`).forEach(item => item.classList.remove(`calculating__choose-item_active`));
+				e.target.classList.add(`calculating__choose-item_active`);
+				info.sex = e.target.getAttribute(`id`);
+			}
+
+			calc();
+		});
+
+		activityWrapper.addEventListener(`click`, e => {
+			if (e.target.dataset.ratio) {
+				activityWrapper.querySelectorAll(`.calculating__choose-item`).forEach(item => item.classList.remove(`calculating__choose-item_active`));
+				e.target.classList.add(`calculating__choose-item_active`);
+				info.activityRatio = e.target.dataset.ratio;
+			}
+
+			calc();
+		});
+
+		function getInputValue (selector) {
+			const input = mainWrapper.querySelector(selector);
+
+			input.addEventListener(`input`, (e) => {
+				if (parseFloat(e.target.value)) {
+					info[e.target.getAttribute(`id`)] = parseFloat(e.target.value);
+				}
+			})
+
+			calc();
+		}
+
+		function calc() {
+			if (info.sex && info.height && info.weight && info.age && info.activityRatio) {
+				if (info.sex === `male`) {
+					let calories = Math.round((88.36 + (13.4 * info.weight) + (4.8 * info.height) - (5.7 * info.age)) * info.activityRatio);
+					resultWrapper.innerHTML = `<span>${calories}</span> ккал`;
+				} else if (info.sex = `female`) {
+					let calories = Math.round((447.6 + (9.2 * info.weight) + (3.1 * info.height) - (4.3 * info.age)) * info.activityRatio);
+					resultWrapper.innerHTML = `<span>${calories}</span> ккал`;
+				}
+			}
+		}
+	}
+
+	caloriesCalc();
 
 });
